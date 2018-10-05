@@ -279,7 +279,7 @@ class eZTextFileUser extends eZUser
                             $user->setAttribute( 'login', $login );
                             $user->setAttribute( 'email', $email );
                             $user->setAttribute( 'password_hash', "" );
-                            $user->setAttribute( 'password_hash_type', 0 );
+                            $user->setAttribute( 'password_hash_type', self::PASSWORD_HASH_EMPTY );
                             $user->store();
 
                             eZUser::updateLastVisit( $userID );
@@ -318,7 +318,7 @@ class eZTextFileUser extends eZUser
                             $existUser = eZUser::fetch(  $userID );
                             $existUser->setAttribute('email', $email );
                             $existUser->setAttribute('password_hash', "" );
-                            $existUser->setAttribute('password_hash_type', 0 );
+                            $existUser->setAttribute('password_hash_type', self::PASSWORD_HASH_EMPTY );
                             $existUser->store();
 
                             if ( $defaultUserPlacement != $parentNodeID )

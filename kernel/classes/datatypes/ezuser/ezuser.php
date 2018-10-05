@@ -17,6 +17,8 @@
 
 class eZUser extends eZPersistentObject
 {
+    /// No hash, used by external handlers such as LDAP and TextFile
+    const PASSWORD_HASH_EMPTY = 0;
     /// MD5 of password
     const PASSWORD_HASH_MD5_PASSWORD = 1;
     /// MD5 of user and password
@@ -123,6 +125,10 @@ class eZUser extends eZPersistentObject
     {
         switch ( $id )
         {
+            case self::PASSWORD_HASH_EMPTY:
+            {
+                return 'empty';
+            } break;
             case self::PASSWORD_HASH_MD5_PASSWORD:
             {
                 return 'md5_password';
@@ -161,6 +167,10 @@ class eZUser extends eZPersistentObject
     {
         switch ( $identifier )
         {
+            case 'empty':
+            {
+                return self::PASSWORD_HASH_EMPTY;
+            } break;
             case 'md5_password':
             {
                 return self::PASSWORD_HASH_MD5_PASSWORD;
@@ -1858,8 +1868,11 @@ WHERE user_id = '" . $userID . "' AND
         }
         else // self::DEFAULT_PASSWORD_HASH
         {
-            eZDebug::writeError( "Password hash type ID '$type' is not recognized. " .
-                                 'Defaulting to eZUser::DEFAULT_PASSWORD_HASH.' );
+            if ( $type !== self::PASSWORD_HASH_EMPTY )
+            {
+                eZDebug::writeError( "Password hash type ID '$type' is not recognized. " .
+                                     'Defaulting to eZUser::DEFAULT_PASSWORD_HASH.' );
+            }
             $str = self::createHash( $user, $password, $site, self::DEFAULT_PASSWORD_HASH, $hash );
         }
         eZDebugSetting::writeDebug( 'kernel-user', $str, "ezuser($type)" );
